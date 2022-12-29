@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include <string.h>
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
@@ -44,9 +45,6 @@ int main()
 
 
 	char *messageToSend = (char*)malloc(sizeof(char) * DEFAULT_BUFLEN);
-
-
-
 
 
 	// create a socket
@@ -86,7 +84,72 @@ int main()
 	int publisher = 0;  // when we send 0 server know that publisher connected
 	iResult = send(connectSocket, (char*)&publisher, sizeof(int), 0);
 
+	char file[] = "Topics.txt";
+	
 
+	FILE *topicsFile = SafeOpen((char*)file,((char*)"r"));
+	Topic_node* head = NULL;
+	int counter;
+	ReadAllTopics(topicsFile, &head, &counter);
+
+	fclose(topicsFile);
+
+	PublisherNode *node = (PublisherNode*)malloc(sizeof(PublisherNode));
+	char *serializedMessage = (char*)malloc(sizeof(DEFAULT_BUFLEN));
+
+	do {
+
+
+
+
+		PrintPublisherMenu(&head);
+		int selectedOption = SelectSpecificTopic(counter);
+		//printf("\nOVO JE IZABRAO:%d", selectedOption);
+
+		if (selectedOption == 0)
+			break;
+
+		EnterMessage(messageToSend);
+
+		//printf("\nOvo je hteo da posalje:%s\n", messageToSend);
+
+
+
+
+		//PublisherNode *node = (PublisherNode*)malloc(sizeof(PublisherNode));
+		strcpy_s(node->message, messageToSend);
+		node->messageLength = strlen(node->message);
+		node->topicId = selectedOption - 1; //ako selektuje 1 to znaci da je 0 indeks
+
+
+		serializedMessage = SerializePublisherData(node);
+
+		int size = 2 * sizeof(int) + node->messageLength;
+
+
+
+
+		bool end = SendPublisherMessageToServer(connectSocket, serializedMessage, size);
+
+		if (end)
+			break;
+
+
+
+
+	} while (true);
+
+
+	printf("\n\nPress any key to close publisher...\n\n");
+	char c = getchar();
+	c = getchar();
+
+	//free allocated memory
+
+	free(messageToSend);
+	free(node);
+	free(serializedMessage);
+	FreeTopicList(&head);
 
 	closesocket(connectSocket);
 	WSACleanup();

@@ -23,5 +23,11 @@
     <ClInclude Include="TopicList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Structures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
