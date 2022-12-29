@@ -154,6 +154,8 @@
     <ClCompile Include="Common.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommonFunctions.h" />
+    <ClInclude Include="Structures.h" />
     <ClInclude Include="TopicList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
