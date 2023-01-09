@@ -26,7 +26,7 @@
 bool InitializeWindowsSockets()
 {
 	WSADATA wsaData;
-	// Initialize windows sockets library for this process
+	
 	if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		printf("WSAStartup failed with error: %d\n", WSAGetLastError());
@@ -39,6 +39,14 @@ bool InitializeWindowsSockets()
 
 int main()
 {
+
+	if (InitializeWindowsSockets() == false)
+	{
+
+		return 1;
+	}
+
+
 	SOCKET connectSocket = INVALID_SOCKET;
 	// variable used to store function return value
 	int iResult;
@@ -102,21 +110,25 @@ int main()
 
 
 
-		PrintPublisherMenu(&head);
+		//PrintPublisherMenu(&head);
+		printf("\n\n-----------------------Menu---------------------\n");
+		printf("Dodaj vesti na temu:\n");
+		PrintTopicListWithCounter(&head);
+		printf("0. Zavrsi sa objavama\n");
 		int selectedOption = SelectSpecificTopic(counter);
-		//printf("\nOVO JE IZABRAO:%d", selectedOption);
+		
 
 		if (selectedOption == 0)
 			break;
 
 		EnterMessage(messageToSend);
 
-		//printf("\nOvo je hteo da posalje:%s\n", messageToSend);
+		
 
 
 
 
-		//PublisherNode *node = (PublisherNode*)malloc(sizeof(PublisherNode));
+		
 		strcpy_s(node->message, messageToSend);
 		node->messageLength = strlen(node->message);
 		node->topicId = selectedOption - 1; //ako selektuje 1 to znaci da je 0 indeks

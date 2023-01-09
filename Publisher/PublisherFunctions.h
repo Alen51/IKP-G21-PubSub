@@ -8,14 +8,22 @@
 #include <string.h>
 #include "../Common/TopicList.h"
 #include "../Common/CommonFunctions.h"
-void PrintPublisherMenu(Topic_node** head)
-{
-	printf("\n\n-----------------------Menu---------------------\n");
-	printf("Add news to specific topic\n");
-	PrintTopicListWithCounter(head);
-	printf("0. Finished with sending messages\n");
-}
 
+
+bool ValidatePublisherInput(int selectedOption, int topicCounter)
+{
+	bool condition = (selectedOption < 0 || selectedOption > topicCounter) ? false : true;
+
+	if (!condition)
+	{
+		if (topicCounter == 1)
+			printf("\nYou can not select %d., try with option 0. or 1.\n", selectedOption);
+		else
+			printf("\nYou can not select %d., try with option beetween 0. and %d.\n", selectedOption, topicCounter);
+	}
+
+	return condition;
+}
 
 int SelectSpecificTopic(int topicCounter)
 {
@@ -34,25 +42,12 @@ int SelectSpecificTopic(int topicCounter)
 
 		fflush(stdin);
 
-	} while (true/*!ValidatePublisherInput(option, topicCounter)*/);
+	} while (!ValidatePublisherInput(option, topicCounter));
 
 	return option;
 }
 
-bool ValidatePublisherInput(int selectedOption, int topicCounter)
-{
-	bool condition = (selectedOption < 0 || selectedOption > topicCounter) ? false : true;
 
-	if (!condition)
-	{
-		if (topicCounter == 1)
-			printf("\nYou can not select %d., try with option 0. or 1.\n", selectedOption);
-		else
-			printf("\nYou can not select %d., try with option beetween 0. and %d.\n", selectedOption, topicCounter);
-	}
-
-	return condition;
-}
 
 
 
