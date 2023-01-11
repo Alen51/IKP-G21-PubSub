@@ -1,5 +1,7 @@
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 
-#pragma once
 #define MAX_MESSAGE_LENGTH 512
 
 
