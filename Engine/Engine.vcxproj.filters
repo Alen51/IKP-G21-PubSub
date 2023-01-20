@@ -32,5 +32,8 @@
     <ClInclude Include="EngineFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClientList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

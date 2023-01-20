@@ -4,6 +4,7 @@
 
 #include "Queue.h"
 #include <ws2tcpip.h>
+/*
 typedef struct Client_information {
 
 	int clientID;
@@ -14,4 +15,4 @@ typedef struct Client_information {
 
 	struct Client_information* next;
 
-}Client_information;
+}Client_information;*/
