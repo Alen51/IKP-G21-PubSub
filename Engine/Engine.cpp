@@ -19,6 +19,10 @@ int main()
 {
 	Client_information *clientInformation = NULL;
 
+	InitializeClientInformationCriticalSection();
+	InitializeDictionaryCriticalSection();
+	InitializeTopicListCriticalSection();
+
 	handleFinishSignal = CreateSemaphore(0, 0, 1, NULL);
 
 	FILE *topicsFile = SafeOpen((char*)"Topics.txt", (char*)"r");

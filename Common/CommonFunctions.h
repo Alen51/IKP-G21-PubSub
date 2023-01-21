@@ -131,7 +131,7 @@ void ReadAllTopics(FILE *in, Topic_node** head, int* elementCounter)
 
 	char newTopic[MAX_TOPIC_LENGTH];
 
-	while (fscanf_s(in, "%s", newTopic) != EOF) {
+	while (fscanf(in, "%s", newTopic) != EOF) {
 
 
 
