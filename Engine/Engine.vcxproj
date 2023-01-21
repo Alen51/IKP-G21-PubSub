@@ -154,6 +154,7 @@
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClientList.h" />
     <ClInclude Include="EngineFunctions.h" />
     <ClInclude Include="Informations.h" />
     <ClInclude Include="Queue.h" />

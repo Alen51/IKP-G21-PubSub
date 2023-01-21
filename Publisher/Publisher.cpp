@@ -40,10 +40,12 @@ bool InitializeWindowsSockets()
 int main()
 {
 
+	InitializeTopicListCriticalSection();
+
 	if (InitializeWindowsSockets() == false)
 	{
-
-		return 1;
+		printf("InitializeWindowsSockets je false");
+		return 0;
 	}
 
 

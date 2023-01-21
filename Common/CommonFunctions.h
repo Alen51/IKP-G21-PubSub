@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ws2tcpip.h>
-
+#include "TopicList.h"
 
 typedef enum SelectOption { READ, WRITE };
 
@@ -131,7 +131,7 @@ void ReadAllTopics(FILE *in, Topic_node** head, int* elementCounter)
 
 	char newTopic[MAX_TOPIC_LENGTH];
 
-	while (fscanf_s(in, "%s", newTopic) != EOF) {
+	while (fscanf(in, "%s", newTopic) != EOF) {
 
 
 
