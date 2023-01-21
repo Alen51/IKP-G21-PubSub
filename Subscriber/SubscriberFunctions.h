@@ -32,9 +32,9 @@ bool ValidateSubscriberInput(int selectedOption, int topicCounter)
 	if (!condition)
 	{
 		if (topicCounter == 1)
-			printf("\nYou can not select %d., try with option 1.\n", selectedOption);
+			printf("\nMozete odabrati %d., probajte sa opcijom 1.\n", selectedOption);
 		else
-			printf("\nYou can not select %d., try with option beetween 1. and %d.\n", selectedOption, topicCounter + 1);
+			printf("\nMozete odabrati %d., probajte sa opcijom izmedju 1. i %d.\n", selectedOption, topicCounter + 1);
 	}
 
 	return condition;
@@ -47,17 +47,17 @@ int SubscribeToSpecificTopic(int topicCounter, int* subscribedTopics)
 
 	if (topicCounter == 0)
 	{
-		printf("\nThere are no topics!\n");
+		printf("\nNema nijedna tema!\n");
 		return -1;
 	}
 
 	do {
 
-		printf("Select topic to subscribe: ");
+		printf("Izabrite temu da se pretplatite: ");
 		scanf("%d", &option);
 
 		if (subscribedTopics[option - 1] == 1)
-			printf("\nYou are already subscribed to selected topic!\n");
+			printf("\nVec ste pretplaceni na datu temu!\n");
 
 	} while (!ValidateSubscriberInput(option, topicCounter));
 
@@ -70,7 +70,7 @@ void PrintSubsribedTopics(Topic_node** head, int *subscribedTopics, int topicCou
 
 
 	printf("\n*****************************************************************\n");
-	printf("Subsribed to next topics: ");
+	printf("Pretplaceni ste na ove teme: ");
 
 	for (int i = 0; i < topicCounter; i++)
 	{
