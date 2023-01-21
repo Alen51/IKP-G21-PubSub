@@ -6,7 +6,7 @@
 
 #define QUEUE_MAX_SIZE 100
 #define MAX_MESSAGE_LEN 512
-
+#define MAX_MESSAGE 512
 #include <ws2tcpip.h>
 
 typedef struct Queue_node
@@ -75,6 +75,41 @@ void Enqueue(Queue** queue, char* message)
 	{
 		printf("Queue is full\n");
 	}
+}
+
+void Enqueue(Queue** queue, int topicId, char* message)
+{
+
+	EnterCriticalSection(&((*queue)->queue_cs));
+
+	if ((*queue)->count < QUEUE_MAX_SIZE)
+	{
+		Queue_node* temp;
+		temp = (Queue_node*)malloc(sizeof(Queue_node));
+
+
+		memset(temp->message, 0, MAX_MESSAGE);
+		memcpy(temp->message, message, strlen(message));
+
+
+		temp->topicId = topicId;
+		temp->next = NULL;
+
+		if (!IsEmptyQueue(*queue))
+		{
+			(*queue)->rear->next = temp;
+			(*queue)->rear = temp;
+		}
+		else
+		{
+			(*queue)->front = temp;
+			(*queue)->rear = temp;
+		}
+		(*queue)->count++;
+	}
+
+
+	LeaveCriticalSection(&((*queue)->queue_cs));
 }
 
 char* Dequeue(Queue** queue)

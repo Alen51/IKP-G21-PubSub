@@ -241,3 +241,14 @@ void RecieveServerMessage(Topic_node **head, SOCKET socket, char* recieveBuffer)
 
 
 }
+
+void DeserializePublisherNode(PublisherNode* publisherNode, char *buffer)
+{
+
+
+	publisherNode->topicId = *(buffer);
+
+	memcpy(&(publisherNode->messageLength), buffer + sizeof(int), sizeof(int));
+
+
+}

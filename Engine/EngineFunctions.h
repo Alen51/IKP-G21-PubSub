@@ -9,71 +9,76 @@
 
 void RecievePublisherMessage(Client_information **client_info, Topic_node **head, SOCKET acceptedSocket, char* recieveBuffer, int clientId){
 	int iResult = -1;
-	int topicCounter = -1;
-	int subsribedTopicCounter = -1;
+
 
 
 
 	while (true)
 	{
 		SelectFunction(acceptedSocket, READ);
-		iResult = recv(acceptedSocket, recieveBuffer, sizeof(int), 0); // pokupim informaciju o broj topica
+		iResult = recv(acceptedSocket, recieveBuffer, sizeof(int) * 2, 0); // pokupim informaciju o topicu i duzini poruke
 
 
-		topicCounter = *(int*)recieveBuffer;
+		PublisherNode *node = (PublisherNode*)malloc(sizeof(PublisherNode));
 
 		if (iResult > 0)
 		{
 			//printf("Message received from client: %s.\n", recieveBuffer);
 
 
-
+			DeserializePublisherNode(node, recieveBuffer);
 
 
 			int bytesRecieved = 0;
-			int topicsLength = topicCounter * sizeof(int);
-
-			char* topics = (char*)malloc(topicsLength);
+			int tempMessageLength = node->messageLength;
 
 			do
 			{
-				iResult = recv(acceptedSocket, topics + bytesRecieved, topicsLength - bytesRecieved, 0);
+				iResult = recv(acceptedSocket, node->message + bytesRecieved, tempMessageLength - bytesRecieved, 0);
 				if (iResult == SOCKET_ERROR || iResult == 0)
 				{
 
-					free(topics);
-
+					break;
 				}
 				bytesRecieved += iResult;
 
-			} while (bytesRecieved < topicsLength);
+			} while (bytesRecieved < tempMessageLength);
 
+			node->message[node->messageLength] = '\0';
+
+			printf("\n\nPublisher sent: %s", node->message);
+			printf("Forwarding message to subscribed clients..");
+
+
+			char* topicName = FindTopicByIdTopicList(head, node->topicId);
+
+			Node* clientsSubscribed = GetDictionaryValue(topicName);   // return clients subsrcibed to specific topic
 
 			
-			int *topicsReal = (int*)topics;
+			Node* current = clientsSubscribed;
 
-			
 
-			for (int i = 0; i < topicCounter; i++)
+			while (current != NULL)
 			{
-				if (topicsReal[i] == 1) {
-					char *topicName = FindTopicByIdTopicList(head, i);
 
-					AddDictionaryElement(topicName, clientId);
+				//printf("\n\nID Subsribera kojem saljem: %d", current->clientID);
+				Client_information *clientSubsrbiedToTopic = FindElementClientInformation(client_info, current->clientID);
+
+
+				if (clientSubsrbiedToTopic != NULL)
+				{
+					Enqueue(&(clientSubsrbiedToTopic->subscriberMessages), node->topicId, node->message);
+					ReleaseSemaphore(clientSubsrbiedToTopic->queueSemaphore, 1, NULL);
 				}
 
+				current = current->next;
 			}
 
+		
+			Sleep(1000);
 
 
-			free(topics);
-
-			break;
-
-
-
-
-
+			free(node);
 		}
 		else if (iResult == 0)
 		{
@@ -81,20 +86,21 @@ void RecievePublisherMessage(Client_information **client_info, Topic_node **head
 			iResult = shutdown(acceptedSocket, SD_SEND);
 			if (iResult == SOCKET_ERROR)
 			{
-
 				printf("shutdown failed with error: %d\n", WSAGetLastError());
 				closesocket(acceptedSocket);
 				WSACleanup();
 
 			}
 
-
+			printf("\n\nConnection with publisher closed.\n");
 			closesocket(acceptedSocket);
 
 
 			DeleteElementClientInformation(client_info, clientId);
-			//PrintClientInformationList(client_info);
-			printf("\nConnection with subscriber closed.\n");
+		
+
+			free(node);
+
 
 			break;
 		}
@@ -110,18 +116,23 @@ void RecievePublisherMessage(Client_information **client_info, Topic_node **head
 			{
 				// there was an error during recv
 				//printf("recv failed with error: %d\n", WSAGetLastError());
+				printf("\n\nConnection with publisher closed.\n");
 				closesocket(acceptedSocket);
-				DeleteElementClientInformation(client_info, clientId);
-				//PrintClientInformationList(client_info);
-				printf("\nConnection with subscriber closed.\n");
 
+
+				DeleteElementClientInformation(client_info, clientId);
+				
+				free(node);
 				break;
 			}
 
 		}
-
-		Sleep(100);
 	}
+
+	Sleep(100);
+
+
+
 
 }
 
