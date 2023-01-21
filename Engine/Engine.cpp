@@ -10,7 +10,7 @@
 #include "../Publisher/PublisherFunctions.h"
 #include "ClientList.h";
 
-#define DEFAULT_PORT "27016"
+#define DEFAULT_PORT "27000"
 
 HANDLE handleFinishSignal;
 DWORD WINAPI ThreadExitFunction(LPVOID lpvThreadParam);
@@ -196,7 +196,7 @@ int main()
 
 
 	FreeClientInformationList(&clientInformation);
-	//FreeDictionary(&head);
+	FreeDictionary(&head);
 	FreeTopicList(&head);
 	free(recvbuf);
 	free(clientThreadData);

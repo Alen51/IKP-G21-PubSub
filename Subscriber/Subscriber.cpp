@@ -15,7 +15,7 @@
 
 #include "SubscriberFunctions.h"
 
-#define DEFAULT_PORT 27016
+#define DEFAULT_PORT 27000
 
 
 int main()
