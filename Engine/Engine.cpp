@@ -8,14 +8,22 @@
 #include "Queue.h"
 #include "ThreadFunctions.h"
 #include "../Publisher/PublisherFunctions.h"
+#include "ClientList.h";
 
+#define DEFAULT_PORT "27000"
 
-#define DEFAULT_PORT "27016"
+HANDLE handleFinishSignal;
+DWORD WINAPI ThreadExitFunction(LPVOID lpvThreadParam);
 
 int main()
 {
 	Client_information *clientInformation = NULL;
 
+	InitializeClientInformationCriticalSection();
+	InitializeDictionaryCriticalSection();
+	InitializeTopicListCriticalSection();
+
+	handleFinishSignal = CreateSemaphore(0, 0, 1, NULL);
 
 	FILE *topicsFile = SafeOpen((char*)"Topics.txt", (char*)"r");
 	Topic_node* head = NULL;
@@ -95,6 +103,106 @@ int main()
 		return 0;
 	}
 
+	if (!PutSocketInNonblockingMode(&listenSocket))
+		return 1;
+
+	printf("Server initialized, waiting for clients.\n");
+
+	DWORD lpThreadIdExit = -1;
+	HANDLE handleExitThread = NULL;
+
+
+	handleExitThread = CreateThread(NULL, 0, &ThreadExitFunction, NULL, 0, &lpThreadIdExit);
+
+	DWORD lpThreadId = -1;
+	HANDLE handleClientThread = NULL;
+
+
+	int clientId = -1;
+	int clientType = -1;
+
+	ClientThradData *clientThreadData = (ClientThradData*)malloc(sizeof(ClientThradData));
+
+
+	clientThreadData->head_clientInfo = &clientInformation;
+	clientThreadData->topic_head = &head;
+
+	char endServer;
+
+
+	while (WaitForSingleObject(handleFinishSignal, 10) == WAIT_TIMEOUT)
+	{
+
+		if (SelectFunctionServer(listenSocket) == 0)
+			continue;
+
+		acceptedSocket = AcceptNewSocket(listenSocket);
+		int clientType = RecieveInitialMessage(acceptedSocket, recvbuf); // return information about clientType ( Publisher or Subsriber)
+
+		clientId++;
+
+		clientThreadData->clientId = clientId;
+		clientThreadData->acceptedSocket = acceptedSocket;
+
+		if (clientType == 0) // publisher connected
+		{
+			// create thread for publisher with publisher function
+			handleClientThread = CreateThread(NULL, 0, &ThreadPublisherFunction, clientThreadData, 0, &lpThreadId);
+
+			if (handleClientThread == NULL)
+			{
+				printf("\nCreating publisher thread failed!\n");
+
+				return -1;
+			}
+
+			InsertEndClientInformation(&clientInformation, clientId, acceptedSocket, lpThreadId, handleClientThread);
+		}
+		else if (clientType == 1) // subsriber connected
+		{
+			// create thread for subscriber with subscriber function
+
+			handleClientThread = CreateThread(NULL, 0, &ThreadSubscriberFunction, clientThreadData, 0, &lpThreadId);
+
+
+			if (handleClientThread == NULL)
+			{
+				printf("\nCreating subscriber thread failed!\n");
+
+				return -1;
+			}
+
+			InsertEndClientInformation(&clientInformation, clientId, acceptedSocket, lpThreadId, handleClientThread);
+		}
+
+	}
+
+
+
+	printf("\n\nPress any key to close server..\n\n");
+
+
+
+
+	char c = getchar();
+	c = getchar();
+
+
+
+
+	CloseAllHandles(&clientInformation);
+
+
+
+
+	FreeClientInformationList(&clientInformation);
+	FreeDictionary(&head);
+	FreeTopicList(&head);
+	free(recvbuf);
+	free(clientThreadData);
+
+
+	CloseHandle(handleFinishSignal);
 
 
 
@@ -104,6 +212,33 @@ int main()
 	printf("\n\nServer successfully closed..\n\n");
 
 	char end = getchar();
+
+	return 0;
+}
+
+DWORD WINAPI ThreadExitFunction(LPVOID lpvThreadParam)
+{
+
+
+
+	char endServer;
+
+	printf("\n\nPress ESC to close server..\n\n");
+
+	do {
+
+
+		endServer = getchar();
+
+
+	} while (endServer != 27);
+
+	printf("\nServer is closing down..\n");
+
+
+
+	ReleaseSemaphore(handleFinishSignal, 1, NULL);
+
 
 	return 0;
 }

@@ -23,13 +23,16 @@
     <ClInclude Include="Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Informations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EngineFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

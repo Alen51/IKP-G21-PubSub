@@ -155,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonFunctions.h" />
+    <ClInclude Include="Dictionary.h" />
+    <ClInclude Include="List.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="TopicList.h" />
   </ItemGroup>

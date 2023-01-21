@@ -15,7 +15,7 @@
 
 #include "SubscriberFunctions.h"
 
-#define DEFAULT_PORT 27016
+#define DEFAULT_PORT 27000
 
 
 int main()
@@ -85,10 +85,10 @@ int main()
 		do {
 
 			
-			printf("\n\n-----------------------Menu---------------------\n");
-			printf("Subsribe to specific topic\n");
+			printf("\n\n-----------------------Meni---------------------\n");
+			printf("Pretplati se na temu\n");
 			PrintTopicListWithCounter(&head);
-			printf("%d. Finished with subscribing\n", counter + 1);
+			printf("%d. Gotovo pretplaćivanje\n", counter + 1);
 
 			choice = SubscribeToSpecificTopic(counter, subscribedTopics);
 
@@ -109,7 +109,7 @@ int main()
 		} while (SubscribedToAllTopics(subscribedTopics, counter) && (choice != counter + 1));
 
 		if (!isSubsribed)
-			printf("\nYou have to subscribe to at least one topic!\n");
+			printf("\nMorate se pretplatiti na najmanje jednu temu!\n");
 
 	} while (!isSubsribed);
 
@@ -141,7 +141,7 @@ int main()
 
 	printf("Bytes Sent: %ld\n", iResult);
 
-	printf("\n\nPress ESC to close client subscriber...\n\n");
+	printf("\n\nPritisnite ESC da ugasite subscribera...\n\n");
 
 	DWORD lpThreadId;
 	HANDLE hThreadRecieve;
@@ -170,7 +170,7 @@ int main()
 	} while (c != 27); // if ESC break
 
 
-	printf("\n\nSubscriber closed successfully!\n");
+	printf("\n\nSubscriber uspesno zatvoren!\n");
 
 	char end = getchar();
 	end = getchar();

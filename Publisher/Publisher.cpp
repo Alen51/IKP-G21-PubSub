@@ -19,7 +19,7 @@
 #include "PublisherFunctions.h"
 
 #define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT 27016
+#define DEFAULT_PORT 27000
 
 
 
@@ -40,10 +40,12 @@ bool InitializeWindowsSockets()
 int main()
 {
 
+	InitializeTopicListCriticalSection();
+
 	if (InitializeWindowsSockets() == false)
 	{
-
-		return 1;
+		printf("InitializeWindowsSockets je false");
+		return 0;
 	}
 
 
